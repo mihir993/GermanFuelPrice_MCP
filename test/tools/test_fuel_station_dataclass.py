@@ -7,7 +7,7 @@ from core.tools.fuel_station_dataclass import FuelStationWithLiveData, FuelStati
 @pytest.fixture
 def single_fuel_station_dict():
     return """{
-     "id": "474e5046-deaf-4f9b-9a32-9797b778f047",
+    "id": "474e5046-deaf-4f9b-9a32-9797b778f047",
     "name": "TOTAL BERLIN",
     "brand": "TOTAL",
     "street": "MARGARETE-SOMMER-STR.",
