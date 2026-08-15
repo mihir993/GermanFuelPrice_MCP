@@ -26,11 +26,11 @@ class TankerkoenigConnector:
             response= client.get(url)
             return response
 
-    def get_nearby_stations(self, lng, lat, rad=25, type = "all", sort="dist"):
+    def get_nearby_stations(self, lat, lng, rad=25, type = "all", sort="dist"):
         php_str = "list.php"
         request_url = (self.base_url + "/" + php_str +
-                       "?" + "lng=" + str(lng) +
-                       "&" + "lat=" + str(lat) +
+                       "?" + "lat=" + str(lat) +
+                       "&" + "lng=" + str(lng) +
                        "&" + "rad=" + str(rad) +
                        "&" + "type=" + type +
                        "&" + "sort=" + sort +
