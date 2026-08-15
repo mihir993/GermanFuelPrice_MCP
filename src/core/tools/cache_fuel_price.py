@@ -1,5 +1,5 @@
 """
-Persistent, rate-limit-aware cache for the Tankerkönig fuel-price MCP server.
+Persistent, rate-limit-aware cache for the German-fuel-price MCP server.
 
 Design goals:
 - Survives process restarts (MCP clients respawn the server often).
@@ -19,7 +19,7 @@ from typing import Any, Callable, Optional
 
 from platformdirs import user_cache_dir
 
-APP_NAME = "fuel-price-mcp"
+APP_NAME = "german-fuel-price-mcp"
 
 PRICE_TTL_SECONDS = 5 * 60          # how long a price entry is considered fresh
 STATION_TTL_SECONDS = 24 * 60 * 60  # station metadata changes rarely
