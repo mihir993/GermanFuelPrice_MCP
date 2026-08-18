@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from core.tools.fuel_station_dataclass import FuelStationWithLiveData, FuelStation, FuelPrice,LiveInformation
+from core.tools.fuel_station_dataclass import FuelStationWithLiveData, FuelStation, FuelPrice,LiveInformation, PriceStationId
 
 
 @pytest.fixture
@@ -84,6 +84,36 @@ def tankerkoenig_api_response():
 }
     """
 
+@pytest.fixture
+def prices_response():
+    return """
+    {
+    "ok": true,
+    "license": "CC BY 4.0 -  https:\/\/creativecommons.tankerkoenig.de",
+    "data": "MTS-K",
+    "prices": {
+        "60c0eefa-d2a8-4f5c-82cc-b5244ecae955": {
+            "status": "open",
+            "e5": false,
+            "e10": false,
+            "diesel": 1.189
+        },
+        "446bdcf5-9f75-47fc-9cfa-2c3d6fda1c3b": {
+            "status": "closed"
+        },
+        "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8": {
+            "status": "open",
+            "e5": 1.409,
+            "e10": 1.389,
+            "diesel": 1.129
+        },
+        "44444444-4444-4444-4444-444444444444": {
+            "status": "no prices"
+            }
+        }
+    }
+    """
+
 class TestFuelStation:
 
     def test_fuel_station(self, single_fuel_station_dict):
@@ -131,3 +161,29 @@ class TestFuelStationWithLiveData:
         assert stations_list[0].fuelstation.id == "474e5046-deaf-4f9b-9a32-9797b778f047"
         assert stations_list[1].fuelstation.id == "123e4567-e89b-12d3-a456-426614174000"
         assert stations_list[2].fuelstation.id == "987fcdeb-51a2-43d1-9f12-abcdef123456"
+
+    def test_timestampt_is_added_to_livedata(self, tankerkoenig_api_response):
+        json_dict = json.loads(tankerkoenig_api_response)
+        stations_list_dict = json_dict["stations"]
+        expected_timestamp = 12345678.65
+        stations_list = FuelStationWithLiveData.list_from_dict(stations_list_dict, expected_timestamp)
+
+        assert stations_list[0].livedata.timestamp == expected_timestamp
+        assert stations_list[1].livedata.timestamp == expected_timestamp
+        assert stations_list[2].livedata.timestamp == expected_timestamp
+
+
+class TestPricesAPIData:
+
+    def test_prices_api_response(self, prices_response):
+        json_dict = json.loads(prices_response)
+        prices_list_dict = json_dict["prices"]
+        prices_obj_list = PriceStationId.from_api_dict(prices_list_dict)
+
+        assert prices_obj_list[0].fuel_station_id == "60c0eefa-d2a8-4f5c-82cc-b5244ecae955"
+        assert prices_obj_list[1].fuel_station_id == "446bdcf5-9f75-47fc-9cfa-2c3d6fda1c3b"
+        assert prices_obj_list[2].fuel_station_id == "4429a7d9-fb2d-4c29-8cfe-2ca90323f9f8"
+
+        assert prices_obj_list[0].fuel_price.diesel == 1.189
+        assert prices_obj_list[0].fuel_price.e5 == None
+        assert prices_obj_list[0].fuel_price.e10 == None
