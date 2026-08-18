@@ -48,7 +48,7 @@ class FuelPrice:
 @dataclass
 class LiveInformation:
     isopen: bool # if fuel station is open at the time of query
-    dist: float # disdtance from original queried location
+    dist: float = -1 # disdtance from original queried location
     fuel_price: FuelPrice # live fuel prices at the time of query
     timestamp: float = 0.0
 
